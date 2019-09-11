@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+    <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+    <script src="./everything.js" charset="utf-8"></script>
+    <script src="jquery-2.js"></script>
+  </head>
+  <body>
+    <button id = "close" type="button" name="button">close</button>
+    <button id = "open" type="button" name="button">open</button>
+
+    <button id = "destination" type="button" name="button">destination</button>
+    <button id = "startposition" type="button" name="button">startposition</button>
+
+    <button id = "pickup" type="button" name="button">pickup</button>
+    <button id = "takein" type="button" name="button">takein</button>
+    <button id = "takeoff" type="button" name="button">takeoff</button>
+    <button id = "getout" type="button" name="button">getout</button>
+
+    <button id = "forward" type="button" name="button">forward</button>
+    <button id = "backward" type="button" name="button">backward</button>
+
+    <button id = "gotoforward" type="button" name="button">gotoforward</button>
+    <button id = "gotobackward" type="button" name="button">gotobackward</button>
+    <button id = "turnleft" type="button" name="button">turnleft</button>
+    <button id = "turnright" type="button" name="button">turnright</button>
+    <button id = "stop" type="button" name="button">stop</button>
+
+    <button id = "xplus" type="button" name="button">xplus</button>
+    <button id = "xminus" type="button" name="button">xminus</button>
+    <button id = "yplus" type="button" name="button">yplus</button>
+    <button id = "yminus" type="button" name="button">yminusn</button>
+    <button id = "zplus" type="button" name="button">zplus</button>
+    <button id = "zminus" type="button" name="button">zminus</button>
+    <button id = "image" type="button" name="button">image</button>
+    <img id="stream" src="">
+    <canvas id="canvas" height="480" width="640"></canvas>
+    <script type="text/javascript">
+
+    function sleep(ms){
+      ts1 = new Date().getTime() + ms;
+      do ts2 = new Date().getTime(); while (ts2<ts1);
+      }
+      var canvas;
+      var context;
+
+/////////////////////////////////////////////////
+      $( document ).ready(function(e) {
+      //   $("#image").on("click", function(e){
+      //     console.log("start image");
+      //     rosManager.getImgStream(function(result){
+      //       let canvas = document.getElementById("canvas");
+      //       let ctx = canvas.getContext('2d');
+      //       let imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      //       let src = cv.matFromImageData(imgData);
+      //       let dst = new cv.Mat();
+      //       // scale and shift are used to map the data to [0, 255].
+      //       src.convertTo(dst, cv.CV_8U, scale, shift);
+      //       // *** is GRAY, RGB, or RGBA, according to src.channels() is 1, 3 or 4.
+      //       cv.cvtColor(dst, dst, cv.COLOR_***2RGBA);
+      //
+      //     });
+      //   });
+
+
+        /////////////////////////////////////
+        $("#xplus").on("click", function(e){
+          console.log("start xplus");
+          rosManager.getToTargetKinematics(rosManager.kinematicsGetJointPosition, function(result){
+            var location = result.kinematics_pose.pose;
+            console.log(location.position.x);
+            location.position.x += 0.02;
+            console.log(location.position.x);
+
+            //rosManager.kinematics_pose = result.kinematics_pose;
+            rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+              function(result){
+                sleep(3*1000);
+                console.log("3s after");
+              }
+            );
+          });
+        });
+          $("#xminus").on("click", function(e){
+            console.log("start xminus");
+            rosManager.getToTargetKinematics(rosManager.kinematicsGetJointPosition, function(result){
+              var location = result.kinematics_pose.pose;
+              location.position.x -= 0.02;
+              //rosManager.kinematics_pose = result.kinematics_pose;
+              rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+                function(result){
+                  sleep(3*1000);
+                  console.log("3s after");
+                }
+              );
+            });
+          });
+            $("#yplus").on("click", function(e){
+              console.log("start yplus");
+              rosManager.getToTargetKinematics(rosManager.kinematicsGetJointPosition, function(result){
+                var location = result.kinematics_pose.pose;
+                location.position.y += 0.02;
+                //rosManager.kinematics_pose = result.kinematics_pose;
+                rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+                  function(result){
+                    sleep(3*1000);
+                    console.log("3s after");
+                  }
+                );
+              });
+            });
+            $("#yminus").on("click", function(e){
+              console.log("start yminus");
+              rosManager.getToTargetKinematics(rosManager.kinematicsGetJointPosition, function(result){
+                var location = result.kinematics_pose.pose;
+                location.position.y -= 0.02;
+                //rosManager.kinematics_pose = result.kinematics_pose;
+                rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+                  function(result){
+                    sleep(3*1000);
+                    console.log("3s after");
+                  }
+                );
+              });
+            });
+            $("#zplus").on("click", function(e){
+              console.log("start zplus");
+              rosManager.getToTargetKinematics(rosManager.kinematicsGetJointPosition, function(result){
+                var location = result.kinematics_pose.pose;
+                location.position.z += 0.02;
+                //rosManager.kinematics_pose = result.kinematics_pose;
+                rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+                  function(result){
+                    sleep(3*1000);
+                    console.log("3s after");
+                  }
+                );
+              });
+            });
+            $("#zminus").on("click", function(e){
+              console.log("start zminus");
+              rosManager.getToTargetKinematics(rosManager.kinematicsGetJointPosition, function(result){
+                var location = result.kinematics_pose.pose;
+                location.position.z -= 0.02;
+                //rosManager.kinematics_pose = result.kinematics_pose;
+                rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+                  function(result){
+                    sleep(3*1000);
+                    console.log("3s after");
+                  }
+                );
+              });
+            });
+
+
+        //////////////////////////////////////////////////////////////////////////////////
+        $("#gotoforward").on("click", function(e){
+          console.log("start gotoforward");
+          rosManager.twistObject.linear.x = 0.1;
+          rosManager.publishForCmdVel(rosManager.twistObject, rosManager.cmdVel);
+          rosManager.twistObject.linear.x = 0.0;
+        });
+        $("#gotobackward").on("click", function(e){
+          console.log("start gotobackward");
+          rosManager.twistObject.linear.x = -0.1;
+          rosManager.publishForCmdVel(rosManager.twistObject, rosManager.cmdVel);
+          rosManager.twistObject.linear.x = 0.0;
+        });
+        $("#turnleft").on("click", function(e){
+          console.log("start turnleft");
+          rosManager.twistObject.angular = { x : 0.3, y : 0.3, z : 0.3 };
+          rosManager.publishForCmdVel(rosManager.twistObject, rosManager.cmdVel);
+          rosManager.twistObject.angular = { x : 0.0, y : 0.0, z : 0.0 };
+        });
+        $("#turnright").on("click", function(e){
+          console.log("start turnright");
+          rosManager.twistObject.angular = { x : -0.3, y : -0.3, z : -0.3 };
+          rosManager.publishForCmdVel(rosManager.twistObject, rosManager.cmdVel);
+          rosManager.twistObject.angular = { x : 0.0, y : 0.0, z : 0.0 };
+        });
+        $("#stop").on("click", function(e){
+          console.log("stop");
+          rosManager.twistObject = {
+            linear : {
+              x : 0.0,
+              y : 0.0,
+              z : 0.0
+            },
+            angular : {
+              x : 0.0,
+              y : 0.0,
+              z : 0.0
+            }
+          };
+          rosManager.publishForCmdVel(rosManager.twistObject, rosManager.cmdVel);
+        });
+
+        ///////////////////////////////////////////////////
+        $("#forward").on("click", function(e){
+          console.log("start forward");
+          var location = [0.0, 0.2963, 0.3988, -0.6535];
+          rosManager.moveToTarget(location, rosManager.joint_pos, rosManager.setJointPosition, function(result){
+            console.log("forward end");
+          });
+        });
+        $("#backward").on("click", function(e){
+          console.log("start backward");
+          var location = [0.0, -0.5348, 1.1652, -0.5903];
+          rosManager.moveToTarget(location, rosManager.joint_pos, rosManager.setJointPosition, function(result){
+            console.log("backward end");
+          });
+        });
+////////////////////////////////////////////////////////////
+        $("#startposition").on("click", function(e){
+          console.log("start startposition");
+          rosManager.publishForMoveBaseGoal(rosManager.goal_init, rosManager.navi);
+        });
+        $("#destination").on("click", function(e){
+          console.log("start destination");
+          rosManager.publishForMoveBaseGoal(rosManager.goal_destination, rosManager.navi);
+        });
+/////////////////////////////////////////////////////////////
+        $("#close").on("click", function(e){
+          console.log("start close");
+          rosManager.closeOrOpenGrip(rosManager.close, rosManager.gripper_pos, rosManager.gripper);
+        });
+        $("#open").on("click", function(e){
+          console.log("start open");
+          rosManager.closeOrOpenGrip(rosManager.open, rosManager.gripper_pos, rosManager.gripper);
+        });
+///////////////////////////////////////////////////////////////////
+        $("#pickup").on("click", function(e){
+          console.log("start pickupY");
+          rosManager.closeOrOpenGrip(rosManager.open, rosManager.gripper_pos, rosManager.gripper,
+            function(result)
+            {
+            console.log("open");
+            var location =  {
+              position:{
+                x: 0.1,
+                y: 0.0,
+                z: 0.23
+              },
+              orientation:{
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+                w: 0.0
+              }
+            };
+
+            sleep(3*1000);
+            console.log("3s after");
+
+            rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+              function(result)
+              {
+              console.log("move_y");
+              sleep(4*1000);
+              console.log("5s after");
+              var location =  {
+                position:{
+                  x: 0.20,
+                  y: 0.0,
+                  z: 0.23
+                },
+                orientation:{
+                  x: 0.0,
+                  y: 0.0,
+                  z: 0.0,
+                  w: 0.0
+                }
+              };
+
+              rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+                function(result)
+                {
+                console.log("move_x");
+                sleep(4*1000);
+                console.log("5s after");
+                rosManager.closeOrOpenGrip(rosManager.close, rosManager.gripper_pos, rosManager.gripper,
+                  function(result)
+                  {
+                  console.log("close");
+                });
+              });
+            });
+          });
+          // console.log(location.position.z);
+          //
+          // console.log("move_y");
+          //
+          // console.log(location.position.z);
+          //
+          //
+          // console.log(location.position.z);
+        });
+
+        $("#takein").on("click", function(e){
+          console.log("start takein");
+          var location =  {
+            position:{
+              x: 0.1,
+              y: 0.0,
+              z: 0.28
+            },
+            orientation:{
+              x: 0.0,
+              y: 0.0,
+              z: 0.0,
+              w: 0.0
+            }
+          };
+          rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition);
+          var location =  {
+            position:{
+              x: 0.1,
+              y: 0.0,
+              z: 0.23
+            },
+            orientation:{
+              x: 0.0,
+              y: 0.0,
+              z: 0.0,
+              w: 0.0
+            }
+          };
+          rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition);
+        });
+        $("#takeoff").on("click", function(e){
+          console.log("start takeoff");
+          var location =  {
+            position:{
+              x: 0.1,
+              y: 0.0,
+              z: 0.28
+            },
+            orientation:{
+              x: 0.0,
+              y: 0.0,
+              z: 0.0,
+              w: 0.0
+            }
+          };
+          rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition);
+          var location =  {
+            position:{
+              x: 0.25,
+              y: 0.0,
+              z: 0.28
+            },
+            orientation:{
+              x: 0.0,
+              y: 0.0,
+              z: 0.0,
+              w: 0.0
+            }
+          };
+          rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition);
+        });
+        $("#getout").on("click", function(e){
+          console.log("start getout");
+          rosManager.closeOrOpenGrip(rosManager.open, rosManager.gripper_pos, rosManager.gripper);
+          var location =  {
+            position:{
+              x: 0.1,
+              y: 0.0,
+              z: 0.28
+            },
+            orientation:{
+              x: 0.0,
+              y: 0.0,
+              z: 0.0,
+              w: 0.0
+            }
+          };
+          rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition);
+          var location =  {
+            position:{
+              x: 0.1,
+              y: 0.0,
+              z: 0.23
+            },
+            orientation:{
+              x: 0.0,
+              y: 0.0,
+              z: 0.0,
+              w: 0.0
+            }
+          };
+          rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition);
+          //rosManager.closeOrOpenGrip(rosManager.close, rosManager.gripper_pos, rosManager.gripper);
+        });
+      });
+    </script>
+  </body>
+</html>

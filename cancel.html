@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+    <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+    <script src="./everything.js" charset="utf-8"></script>
+    <script src="jquery-2.js"></script>
+  </head>
+  <body>
+    <h1>auto!</h1>
+    <button id = "stop" type="button" name="button">stop</button>
+    <script type="text/javascript">
+    function sleep(ms){
+      ts1 = new Date().getTime() + ms;
+      do ts2 = new Date().getTime(); while (ts2<ts1);
+      }
+////////////////////////////////////////////////////////////////////////////////////
+      $( document ).ready(function(e) {
+          $("#stop").on("click", function(e){
+            rosManager.getGoalStatus(function(result){
+              console.log(result);
+              console.log(result.status_list[0].status);
+              console.log(result.status_list[0].goal_id.id);
+              console.log(typeof(result.status_list[0].goal_id.id))
+              // for(var item in result.status_list){
+              //   rosManager.publishForCancelGoal(item.goal_id.id, rosManager.navicancel);
+              // }
+              rosManager.publishForCancelGoal(result.status_list[0].goal_id.id, rosManager.navicancel);
+            });
+          });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+    <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+    <script src="./everything.js" charset="utf-8"></script>
+    <script src="jquery-2.js"></script>
+  </head>
+  <body>
+    <h1>auto!</h1>
+    <button id = "stop" type="button" name="button">stop</button>
+    <script type="text/javascript">
+    function sleep(ms){
+      ts1 = new Date().getTime() + ms;
+      do ts2 = new Date().getTime(); while (ts2<ts1);
+      }
+////////////////////////////////////////////////////////////////////////////////////
+      $( document ).ready(function(e) {
+          $("#stop").on("click", function(e){
+            rosManager.getGoalStatus(function(result){
+              rosManager.publishForCancelGoal(result.status_list[0].goal_id.id, rosManager.navicancel);
+            });
+          });
+        console.log("start destination");
+        rosManager.publishForMoveBaseGoal(rosManager.goal_destination, rosManager.navi);
+        var wait = true;
+        var isSuccess = false;
+        rosManager.getGoalStatus(function(result){
+            console.log(result.status_list[0].status);
+          if(result.status_list[0].status == 3){
+            wait = false;
+            isSuccess = true;
+            rosManager.navistatus.unsubscribe();
+            rosManager.navi.unsubscribe();
+            pickup();
+            return
+          }else if(result.status_list[0].status == 4 || result.status_list[0].status == 9){
+            rosManager.publishForCancelGoal(result.status_list[0].goal_id, rosManager.navicancel);
+            wait = false;
+            isSuccess = false;
+          }
+          if(isSuccess){
+            console.log("sucess");
+          }
+        });
+
+
+        function backoff(){
+          console.log("start backward");
+          var location = [0.0, -0.5348, 1.1652, -0.5903];
+          rosManager.moveToTarget(location, rosManager.joint_pos, rosManager.setJointPosition, function(result){
+            console.log("backward end");
+          });
+        }
+        function takeoff(){
+          var location =  {
+            position:{
+              x: 0.1,
+              y: 0.0,
+              z: 0.23
+            },
+            orientation:{
+              x: 0.0,
+              y: 0.0,
+              z: 0.0,
+              w: 0.0
+            }
+          };
+          rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+            function(result)
+            {
+            console.log("move_y");
+            sleep(4*1000);
+            console.log("5s after");
+            var location =  {
+              position:{
+                x: 0.25,
+                y: 0.0,
+                z: 0.23
+              },
+              orientation:{
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+                w: 0.0
+              }
+            };
+            rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+              function(result)
+              {
+                console.log("move_x");
+                sleep(4*1000);
+                console.log("5s after");
+
+                rosManager.closeOrOpenGrip(rosManager.open, rosManager.gripper_pos, rosManager.gripper,
+                  function(result)
+                  {
+                  console.log("open");
+                  backoff();
+                });
+              });
+            });
+
+        }
+        function takein(){
+          console.log("start takein");
+          var location =  {
+            position:{
+              x: 0.20,
+              y: 0.0,
+              z: 0.28
+            },
+            orientation:{
+              x: 0.0,
+              y: 0.0,
+              z: 0.0,
+              w: 0.0
+            }
+          };
+          rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition);
+          var location =  {
+            position:{
+              x: 0.1,
+              y: 0.0,
+              z: 0.23
+            },
+            orientation:{
+              x: 0.0,
+              y: 0.0,
+              z: 0.0,
+              w: 0.0
+            }
+          };
+          rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+            function(result){
+              sleep(4*1000);
+              gotostart();
+          });
+        }
+        function gotostart(){
+          console.log("start startposition");
+          rosManager.publishForMoveBaseGoal(rosManager.goal_init, rosManager.navi);
+          var wait = true;
+          var isSuccess = false;
+          rosManager.getGoalStatus(function(result){
+              console.log(result.status_list[0].status);
+            if(result.status_list[0].status == 3){
+              wait = false;
+              isSuccess = true;
+              rosManager.navistatus.unsubscribe();
+              rosManager.navi.unsubscribe();
+              takeoff();
+              return
+            }else if(result.status_list[0].status == 4 || result.status_list[0].status == 9){
+              rosManager.publishForCancelGoal(result.status_list[0].goal_id, rosManager.navicancel);
+              wait = false;
+              isSuccess = false;
+            }
+            if(isSuccess){
+              console.log("sucess");
+            }
+          });
+
+        }
+        function pickup(){
+          console.log("start pickupY");
+          rosManager.closeOrOpenGrip(rosManager.close, rosManager.gripper_pos, rosManager.gripper);
+          sleep(5000);
+          rosManager.closeOrOpenGrip(rosManager.open, rosManager.gripper_pos, rosManager.gripper,
+            function(result)
+            {
+            console.log("open");
+            var location =  {
+              position:{
+                x: 0.1,
+                y: 0.0,
+                z: 0.23
+              },
+              orientation:{
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+                w: 0.0
+              }
+            };
+
+            sleep(3*1000);
+            console.log("3s after");
+
+            rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+              function(result)
+              {
+              console.log("move_y");
+              sleep(4*1000);
+              console.log("5s after");
+              var location =  {
+                position:{
+                  x: 0.20,
+                  y: 0.0,
+                  z: 0.23
+                },
+                orientation:{
+                  x: 0.0,
+                  y: 0.0,
+                  z: 0.0,
+                  w: 0.0
+                }
+              };
+
+              rosManager.moveToTargetKinematics(location, rosManager.kinematics_pose, rosManager.kinematicsSetJointPosition,
+                function(result)
+                {
+                console.log("move_x");
+                sleep(4*1000);
+                console.log("5s after");
+                rosManager.closeOrOpenGrip(rosManager.close, rosManager.gripper_pos, rosManager.gripper,
+                  function(result)
+                  {
+                  console.log("close");
+                  sleep(4*1000);
+                  takein();
+                });
+              });
+            });
+          });
+
+        }
+      });
+    </script>
+  </body>
+</html>

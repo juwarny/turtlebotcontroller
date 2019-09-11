@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+    <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+    <script src="./everything.js" charset="utf-8"></script>
+    <script src="jquery-2.js"></script>
+  </head>
+  <body>
+    <h1>turnright!</h1>
+    <script type="text/javascript">
+    function sleep(ms){
+      ts1 = new Date().getTime() + ms;
+      do ts2 = new Date().getTime(); while (ts2<ts1);
+      }
+////////////////////////////////////////////////////////////////////////////////////
+      $( document ).ready(function(e) {
+        console.log("start turnright");
+        rosManager.twistObject.angular = { x : -0.3, y : -0.3, z : -0.3 };
+        rosManager.publishForCmdVel(rosManager.twistObject, rosManager.cmdVel);
+        rosManager.twistObject.angular = { x : 0.0, y : 0.0, z : 0.0 };
+      });
+    </script>
+  </body>
+</html>

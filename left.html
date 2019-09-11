@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+    <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+    <script src="./everything.js" charset="utf-8"></script>
+    <script src="jquery-2.js"></script>
+  </head>
+  <body>
+    <h1>rotate left joint num_1!</h1>
+    <script type="text/javascript">
+    function sleep(ms){
+      ts1 = new Date().getTime() + ms;
+      do ts2 = new Date().getTime(); while (ts2<ts1);
+      }
+////////////////////////////////////////////////////////////////////////////////////
+      $( document ).ready(function(e) {
+        console.log("start rotate joint num_1");
+        rosManager.getToTarget(rosManager.getJointPosition, function(result){
+          var location = result.joint_position.position;
+          location[0] -= 0.005;
+          rosManager.moveToTarget(location, rosManager.joint_pos, rosManager.setJointPosition, function(result){
+            console.log("joint1 left end");
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
