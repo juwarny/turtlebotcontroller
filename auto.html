@@ -12,11 +12,6 @@
     <h1>auto!</h1>
     <button id = "stop" type="button" name="button">stop</button>
     <script type="text/javascript">
-    function sleep(ms){
-      ts1 = new Date().getTime() + ms;
-      do ts2 = new Date().getTime(); while (ts2<ts1);
-      }
-////////////////////////////////////////////////////////////////////////////////////
       $( document ).ready(function(e) {
           $("#stop").on("click", function(e){
             rosManager.getGoalStatus(function(result){
